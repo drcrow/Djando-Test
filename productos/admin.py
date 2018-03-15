@@ -12,3 +12,7 @@ admin.site.register(Compra)
 
 from .models import DetalleCompra
 admin.site.register(DetalleCompra)
+
+admin.site.site_header = 'Django Test Admin'
+admin.site.site_title = 'Contenido'
+admin.site.index_title = 'Administración'
