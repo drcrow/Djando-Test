@@ -1,11 +1,20 @@
 from django.shortcuts import render
 
-from .models import Categoria
+from .models import Categoria, Producto, Compra
 
 def index(request):
-    latest_question_list = Categoria.objects.order_by('name')[:5]
-    context = {'latest_question_list': latest_question_list}
-    return render(request, 'productos/abc.html', context)
+
+	if request.POST:
+		compra_form = request.POST
+		context 	= {'compra_form': compra_form}
+
+		return render(request, 'productos/abc.html', context)
+
+	else:
+		productos 	= Producto.objects.order_by('nombre')
+		ciudades 	= Compra.CIUDADES
+		context 	= {'productos': productos, 'ciudades': ciudades}
+		return render(request, 'productos/abc.html', context)
 
 # Create your views here.
 #def index(request):
