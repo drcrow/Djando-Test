@@ -53,42 +53,43 @@ body {
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="../">Home</a></li>
+            <li><a href="../admin">Admin</a></li>
+            <li><a href=".">Productos</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
     <div class="container">
-
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
-
+<br>
+{% if compra %}
+<div class="alert alert-success" role="alert">Compra #{{ compra.compra_id }} {{ prods }} guardada!!!! <a href=".">Continuar...</a></div>
+{% else %}
 
 
-<form class="form-horizontal" method="post">
+
+
+<form class="form-horizontal" method="post">{% csrf_token %}
   <div class="form-group">
     <label for="user" class="col-sm-2 control-label">Usuario</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="user" placeholder="">
+      <input type="text" class="form-control" id="user" name="user" value="{{request.user.username }}" disabled>
+      <input type="hidden" id="userid" name="userid" value="{{request.user.id }}">
     </div>
   </div>
 
   <div class="form-group">
     <label for="date" class="col-sm-2 control-label">Fecha</label>
     <div class="col-sm-10">
-      <input type="date" class="form-control" id="date" placeholder="">
+      <input type="date" class="form-control" id="date" name="date" value="{% now "Y-m-d" %}">
     </div>
   </div>
   
   <div class="form-group">
     <label for="city" class="col-sm-2 control-label">Ciudad</label>
     <div class="col-sm-10">
-      <select class="form-control">
+      <select class="form-control" id="city" name="city">
         {% for id, value in ciudades %}
             <option value="{{ id }}">{{ value }}</option>
         {% endfor %}
@@ -99,40 +100,39 @@ body {
   <div class="form-group">
     <label for="addr" class="col-sm-2 control-label">Direccion</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="addr" placeholder="">
+      <input type="text" class="form-control" id="addr" name="addr" placeholder="">
     </div>
   </div>
 
   <div class="form-group">
     <label for="apt" class="col-sm-2 control-label">Departamento</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="apt" placeholder="">
+      <input type="text" class="form-control" id="apt" name="apt" placeholder="">
     </div>
   </div>
 
   <div class="form-group">
     <label for="tel" class="col-sm-2 control-label">Telefono</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="tel" placeholder="">
+      <input type="text" class="form-control" id="tel" name="tel" placeholder="">
     </div>
   </div>
 
-{% if compra_form %}
-<h1>DATA</h1>
-{{ compra_form }}
-{% endif %}
+
 
 
 {% if productos %}
     <table class="table table-striped">
       <thead><th>Producto</th><th>Precio</th><th>Cantidad</th></thead>
     {% for producto in productos %}
-        <tr><td>{{ producto.nombre }}</td><td>${{ producto.precio }}</td><td><input type="number" id="cant" name="cant" min="0" max="{{ producto.stock }}" value="0"></td></tr>
+        <tr><td>{{ producto.nombre }}</td><td>${{ producto.precio }}</td><td><input class="prod_cant" type="number" id="cant[{{ producto.producto_id }}]" name="cant[{{ producto.producto_id }}]" min="0" max="{{ producto.stock }}" value="0"></td></tr>
     {% endfor %}
     </table>
 {% else %}
     <p>No hay productos disponibles.</p>
 {% endif %}
+
+<input type="text" name="productos" id="productos">
 
 
   <div class="form-group">
@@ -143,6 +143,9 @@ body {
 </form>
 
 
+
+{% endif %}<!--if compra-->
+
     </div><!-- /.container -->
 
 
@@ -152,5 +155,27 @@ body {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<script>
+$(".prod_cant").change(function() {
+
+  console.log($(this).val());
+
+  //$("#productos").val($(this).val());
+
+  var features = {};    // Create empty javascript object
+
+  $(".prod_cant").each(function() {           // Iterate over inputs
+      var id = $(this).attr('name');
+      id=id.replace('cant[', '');
+      id=id.replace(']', '');
+      features[id] = $(this).val();  // Add each to features object
+  });
+
+  $("#productos").val(JSON.stringify(features));
+});
+</script>
+
   </body>
 </html>

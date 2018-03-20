@@ -1,16 +1,35 @@
 from django.shortcuts import render
-
-from .models import Categoria, Producto, Compra
+from .models import Categoria, Producto, Compra, DetalleCompra
+import json
 
 def index(request):
 
 	if request.POST:
-		compra_form = request.POST
-		context 	= {'compra_form': compra_form}
+		#compra_form = request.POST
+		#context 	= {'compra_form': compra_form}
 
+		#user_id = request.POST.get("userid", "")
+		user = request.user
+		date = request.POST.get("date", "")
+		city = request.POST.get("city", "")
+		addr = request.POST.get("addr", "")
+		apt = request.POST.get("apt", "")
+		tel = request.POST.get("tel", "")
+		#timezone.now()
+		compra = Compra(usuario_id=user, fecha=date, ciudad=city, direccion=addr, departamento=apt, telefono=tel)
+		compra.save()
+
+		prods = json.loads(request.POST.get("productos", ""))
+
+		for p_id, p_cant in prods.items():
+			prod = Producto.objects.get(producto_id=p_id)
+			compraDet = DetalleCompra(producto_id=prod, compra_id=compra, cantidad=p_cant, subtotal=0)
+			compraDet.save()
+
+		context 	= {'compra': compra, 'prods': prods}
 		return render(request, 'productos/abc.html', context)
-
 	else:
+		usuario 	= request.user
 		productos 	= Producto.objects.order_by('nombre')
 		ciudades 	= Compra.CIUDADES
 		context 	= {'productos': productos, 'ciudades': ciudades}

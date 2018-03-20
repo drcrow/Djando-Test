@@ -70,7 +70,7 @@ class Compra(models.Model):
     estado			= models.CharField(max_length=100)#no estoy seguro de si es el "estado" de la compra o el "estado" de la "ciudad"
 
     def __str__(self):
-        return self.fecha+" ($"+self.total+")"
+        return str(self.fecha.strftime("%Y %B %d"))+" ($"+str(self.total)+")"
 ##############################################################################################################################
 class DetalleCompra(models.Model):
     detalle_id 			= models.AutoField(primary_key=True)
@@ -81,5 +81,5 @@ class DetalleCompra(models.Model):
     subtotal			= models.FloatField(default=0)
 
     def __str__(self):
-        return self.producto_id+" ($"+self.subtotal+")"
+        return str(self.producto_id)+" ($"+str(self.subtotal)+")"
 ##############################################################################################################################
