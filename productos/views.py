@@ -23,7 +23,7 @@ def index(request):
 
 		for p_id, p_cant in prods.items():
 			prod = Producto.objects.get(producto_id=p_id)
-			compraDet = DetalleCompra(producto_id=prod, compra_id=compra, cantidad=p_cant, subtotal=0)
+			compraDet = DetalleCompra(producto_id=prod, compra_id=compra, cantidad=p_cant, subtotal=(float(prod.precio) * float(p_cant)))
 			compraDet.save()
 
 		context 	= {'compra': compra, 'prods': prods}
